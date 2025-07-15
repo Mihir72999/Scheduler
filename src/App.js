@@ -73,7 +73,7 @@ const App = () => {
     'Gujarat': 'West',
     'Maharashtra': 'West',
     'Goa': 'West',
-    'Rajasthan': 'West',
+    'Rajasthan': 'North',
     'Dadra and Nagar Haveli and Daman and Diu': 'West',
 
     'Andhra Pradesh': 'South',
@@ -108,7 +108,7 @@ const App = () => {
     'Uttarakhand': 'North',
     'Delhi': 'North',
     'Chandigarh': 'North',
-    'Madhya Pradesh': 'North',
+    'Madhya Pradesh': 'West',
 
     'Asia': 'International-Other',
     'Africa': 'International-Other',
