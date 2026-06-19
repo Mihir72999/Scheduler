@@ -250,6 +250,7 @@ const App = () => {
   useEffect(() => {
     if (isInternationalSelected && customerCountry) {
       const code = countryCallingCodes[customerCountry];
+      console.log(code)
       if (code) {
         // If a country with a known calling code is selected, set it as the phone prefix
         setCustomerPhone(code);
@@ -266,7 +267,7 @@ const App = () => {
       // Clear phone if neither international with country nor domestic Indian is selected
       setCustomerPhone('');
     }
-  }, [customerCountry, isInternationalSelected, isDomesticIndianState]);
+  }, [ customerCountry, isInternationalSelected, isDomesticIndianState]);
 
 
   // Handle dropdown change for state selection
@@ -275,34 +276,65 @@ const App = () => {
   };
 
   // Handle phone number input change
-  const handlePhoneChange = (e) => {
-    const rawValue = e.target.value;
-    let processedValue = rawValue;
+  // const handlePhoneChange = (e) => {
+   
+  //   const rawValue = e.currentTarget.value;
+  //   let processedValue = rawValue;
+  //   if (isDomesticIndianState) {
+  //     // For domestic, ensure +91- prefix and limit to 10 digits after prefix
+  //    const digitsOnly = rawValue.replace(/\D/g, '');
+  //     processedValue = '+91-' + digitsOnly.substring(0, 10);
+     
+  //   } else if (isInternationalSelected && customerCountry) {
+  //     const code = countryCallingCodes[customerCountry];
+  //     if (code) {
+  //         const numberPart = rawValue.replace(code, "");
+  //        const digits = numberPart.replace(/\D/g, "");
+  //       // For international with a selected country, ensure the country code prefix is maintained
+             
+  //       if (!rawValue.startsWith(code)) {
+  //         processedValue = code + digits; // Prepend code if missing
+  //       } else {
+  //         processedValue = rawValue; // User is typing after the code
+  //       }
+  //     } else {
+  //       // For 'Other International' or international without a specific country code, allow any input
+  //       processedValue = rawValue;
+  //     }
+  //   } else {
+  //     // Fallback for cases where no specific handling is needed (e.g., initial state)
+  //     processedValue = rawValue;
+  //   }
+  //   setCustomerPhone(processedValue); // Update state with processed value
+  // };
+const handlePhoneChange = (e) => {
+  const rawValue = e.target.value;
 
-    if (isDomesticIndianState) {
-      // For domestic, ensure +91- prefix and limit to 10 digits after prefix
-      const digitsOnly = rawValue.replace(/\D/g, '');
-      processedValue = '+91-' + digitsOnly.substring(0, 10);
-    } else if (isInternationalSelected && customerCountry) {
-      const code = countryCallingCodes[customerCountry];
-      if (code) {
-        // For international with a selected country, ensure the country code prefix is maintained
-        if (!rawValue.startsWith(code)) {
-          processedValue = code + rawValue; // Prepend code if missing
-        } else {
-          processedValue = rawValue; // User is typing after the code
-        }
-      } else {
-        // For 'Other International' or international without a specific country code, allow any input
-        processedValue = rawValue;
-      }
-    } else {
-      // Fallback for cases where no specific handling is needed (e.g., initial state)
-      processedValue = rawValue;
+  if (isDomesticIndianState) {
+    // Remove prefix first
+    const numberPart = rawValue.replace(/^\+91-?/, "");
+
+    // Keep only digits
+    const digits = numberPart.replace(/\D/g, "").slice(0, 10);
+
+    setCustomerPhone(`+91-${digits}`);
+    return;
+  }
+
+  if (isInternationalSelected && customerCountry) {
+    const code = countryCallingCodes[customerCountry];
+
+    if (code) {
+      const numberPart = rawValue.replace(code, "");
+      const digits = numberPart.replace(/\D/g, "");
+
+      setCustomerPhone(`${code}-${digits}`);
+      return;
     }
-    setCustomerPhone(processedValue);
-  };
+  }
 
+  setCustomerPhone(rawValue);
+};
   // Function to construct the Calendly URL with pre-filled information
   const getSchedulingUrl = () => {
     if (salesRep && customerName && customerEmail && customerPhone && customerCompany) {
